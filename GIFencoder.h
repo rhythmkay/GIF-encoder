@@ -15,11 +15,17 @@ typedef struct _imageStruct {
 } imageStruct;
 
 imageStruct* GIFEncoder(unsigned char *data, int width, int height);
+
 void RGB2Indexed(unsigned char *data, imageStruct* image);
+
 int nextPower2(int n);
+
 char numBits(int n);
+
 void GIFEncoderWrite(imageStruct* image, char* outputFile);
+
 void writeGIFHeader(imageStruct* image, FILE* file);
+
 void writeImageBlockHeader(imageStruct* image, FILE* file);
 
 #endif
