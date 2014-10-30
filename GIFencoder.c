@@ -5,7 +5,7 @@
 #include "stdio.h"
 #include "string.h"
 
-//Conversão de um objecto do tipo Image numa imagem indexada
+//Conversao de um objecto do tipo Image numa imagem indexada
 imageStruct* GIFEncoder(unsigned char *data, int width, int height) {
     imageStruct* image = (imageStruct*)malloc(sizeof(imageStruct));
     image->width = width;
@@ -17,7 +17,7 @@ imageStruct* GIFEncoder(unsigned char *data, int width, int height) {
     return image;
 }
 
-//Conversão de lista RGB para indexada: máximo de 256 cores
+//Conversao de lista RGB para indexada: máximo de 256 cores
 void RGB2Indexed(unsigned char *data, imageStruct* image) {
     int x, y, colorIndex, colorNum = 0;
     char *copy;
@@ -139,9 +139,9 @@ void writeGIFHeader(imageStruct* image, FILE* file) {
         fprintf(file, "%c", s[i]);	
 
     //Ecrã lógico (igual à da dimensão da imagem) --> primeiro o LSB e depois o MSB
-    fprintf(file, "%c", (char)( image->width & 0xFF));
+    fprintf(file, "%c", (char)(image->width & 0xFF));
     fprintf(file, "%c", (char)((image->width >> 8) & 0xFF));
-    fprintf(file, "%c", (char)( image->height & 0xFF));
+    fprintf(file, "%c", (char)(image->height & 0xFF));
     fprintf(file, "%c", (char)((image->height >> 8) & 0xFF));
 
     //GCTF, Color Res, SF, size of GCT
@@ -165,24 +165,41 @@ void writeGIFHeader(imageStruct* image, FILE* file) {
         fprintf(file, "%c", image->colors[i]);
 }
 
+/* Meta 1 */
 void writeImageBlockHeader(imageStruct* image, FILE* file) {
-    /* Meta 1 */
-    /* 
-     * image spearator: 0x2c confirmar???
-     * image left position: 0
-     * image top position: 0
-     * image witdh: same as  asked on write gif header
-     * image height: same as asked on write gi header 
-     * (byte com off set 8): 0 (perguntei ao stor e ele disse tudo 0)
-     * local color table: 0
-     * lzw minimum code size: esta no inunciado (ver caderno)
-     * block size: ???
-     * image data: ???
-     * block terminator: 0x00
-     *
-     */
+    char img_separator;
+
+    /* Image Separator */
+    img_separator = 0x2c;
+    fprintf(file, "%c", img_separator);
+
+    /* Left Position */
+    fprintf(file, "%c", (char)0);
+    fprintf(file, "%c", (char)0);
+
+    /* Top Position */
+    fprintf(file, "%c", (char)0);
+    fprintf(file, "%c", (char)0);
+    
+    /* Image Width and Height */
+    fprintf(file, "%c", (char)(image->width & 0xFF));
+    fprintf(file, "%c", (char)((image->width >> 8) & 0xFF));
+    fprintf(file, "%c", (char)(image->height & 0xFF));
+    fprintf(file, "%c", (char)((image->height >> 8) & 0xFF));
+
+    /* Byte Offset 8 */
+    fprintf(file, "%c", (char)0);
+    
+    /* Local Color Tale */
+    fprintf(file, "%c", (char)0);
+   
+    /* LZW Minimum Code Size */
+    fprintf(file, "%c", (char)2); /* Confirmar com o professor */
+
+    /* Block size ainda faz parte desta funcao ? Perguntar prof */
 }
 
+/* Meta 2 */
 void LZWCompress(FILE file, char minCodeSize, char pixels, int widthHeight) {
-    /* Meta 2 */
+    /* Code */
 }
