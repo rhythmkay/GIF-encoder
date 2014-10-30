@@ -11,7 +11,7 @@ imageStruct* GIFEncoder(unsigned char *data, int width, int height) {
     image->width = width;
     image->height = height;
 
-    //converter para imagem indexada
+    //Converter para imagem indexada
     RGB2Indexed(data, image);
 
     return image;
@@ -166,5 +166,23 @@ void writeGIFHeader(imageStruct* image, FILE* file) {
 }
 
 void writeImageBlockHeader(imageStruct* image, FILE* file) {
+    /* Meta 1 */
+    /* 
+     * image spearator: 0x2c confirmar???
+     * image left position: 0
+     * image top position: 0
+     * image witdh: same as  asked on write gif header
+     * image height: same as asked on write gi header 
+     * (byte com off set 8): 0 (perguntei ao stor e ele disse tudo 0)
+     * local color table: 0
+     * lzw minimum code size: esta no inunciado (ver caderno)
+     * block size: ???
+     * image data: ???
+     * block terminator: 0x00
+     *
+     */
+}
 
+void LZWCompress(FILE file, char minCodeSize, char pixels, int widthHeight) {
+    /* Meta 2 */
 }
