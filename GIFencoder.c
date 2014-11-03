@@ -191,12 +191,10 @@ void writeImageBlockHeader(imageStruct* image, FILE* file) {
     fprintf(file, "%c", (char)0);
     
     /* Local Color Tale */
-    fprintf(file, "%c", (char)0);
+    fprintf(file, "%c", (char)0); 
    
     /* LZW Minimum Code Size */
-    fprintf(file, "%c", (char)2); /* Confirmar com o professor */
-
-    /* Block size ainda faz parte desta funcao ? Perguntar prof */
+    fprintf(file, "%c", (char)2); /* Numero de cores */
 }
 
 /* Meta 2 */
