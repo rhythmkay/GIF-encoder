@@ -202,6 +202,7 @@ void writeImageBlockHeader (imageStruct* image, FILE* file) {
 
 /* Meta 2 */
 void LZWCompress (FILE* file, char minCodeSize, char pixels, int widthHeight) {
-    List lista = cria_lista();
-    /* Code */
+    List dicionario = cria_lista();
+    
+    /* Biblioteca de listas adicionada ver list.h para saber como usar */
 }
