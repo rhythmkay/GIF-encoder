@@ -28,6 +28,6 @@ void writeGIFHeader(imageStruct* image, FILE* file);
 
 void writeImageBlockHeader(imageStruct* image, FILE* file);
 
-void LZWCompress(FILE file, char minCodeSize, char pixels, int widthHeight);
+void LZWCompress(FILE* file, char minCodeSize, char pixels, int widthHeight);
 
 #endif
