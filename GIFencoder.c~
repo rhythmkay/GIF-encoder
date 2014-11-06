@@ -14,7 +14,7 @@ imageStruct* GIFEncoder(unsigned char *data, int width, int height) {
     //Converter para imagem indexada
     RGB2Indexed(data, image);
 
-    return image; 
+    return image;
 }
 
 //Conversao de lista RGB para indexada: máximo de 256 cores
