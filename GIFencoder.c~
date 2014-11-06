@@ -1,5 +1,4 @@
 #include "GIFencoder.h"
-#include "list.h"
 
 #include "math.h"
 #include "stdlib.h"
@@ -15,7 +14,7 @@ imageStruct* GIFEncoder(unsigned char *data, int width, int height) {
     //Converter para imagem indexada
     RGB2Indexed(data, image);
 
-    return image; 
+    return image;
 }
 
 //Conversao de lista RGB para indexada: máximo de 256 cores
@@ -101,7 +100,7 @@ char numBits(int n) {
 }
 
 //Função para escrever imagem no formato GIF, versão 87a
-void GIFEncoderWrite (imageStruct* image, char* outputFile) {
+void GIFEncoderWrite(imageStruct* image, char* outputFile) {
     FILE* file = fopen(outputFile, "wb");
     char trailer;
 
@@ -118,7 +117,7 @@ void GIFEncoderWrite (imageStruct* image, char* outputFile) {
     /////////////////////////////////////////
     //CODIFICADOR LZW AQUI !!!! 
     //Sugest‹o de assinatura do mŽtodo a chamar:
-    LZWCompress(file, image->minCodeSize, *(image->pixels), image->width*image->height);
+    LZWCompress(file, image->minCodeSize, image->pixels, image->width*image->height);
 
     fprintf(file, "%c", (char)0);
 
@@ -130,7 +129,7 @@ void GIFEncoderWrite (imageStruct* image, char* outputFile) {
 }
 
 //Gravar cabeçalho do GIF (até global color table)
-void writeGIFHeader (imageStruct* image, FILE* file) {
+void writeGIFHeader(imageStruct* image, FILE* file) {
     int i;
     char toWrite, GCTF, colorRes, SF, sz, bgci, par;
 
@@ -163,13 +162,11 @@ void writeGIFHeader (imageStruct* image, FILE* file) {
 
     //Global color table
     for (i = 0; i < image->numColors * 3; i++)
-    {
         fprintf(file, "%c", image->colors[i]);
-    }
 }
 
 /* Meta 1 */
-void writeImageBlockHeader (imageStruct* image, FILE* file) {
+void writeImageBlockHeader(imageStruct* image, FILE* file) {
     char img_separator;
 
     /* Image Separator */
@@ -201,7 +198,6 @@ void writeImageBlockHeader (imageStruct* image, FILE* file) {
 }
 
 /* Meta 2 */
-void LZWCompress (FILE* file, char minCodeSize, char pixels, int widthHeight) {
-    List lista = cria_lista();
+void LZWCompress(FILE file, char minCodeSize, char pixels, int widthHeight) {
     /* Code */
 }
