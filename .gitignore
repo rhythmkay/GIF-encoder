@@ -2,3 +2,5 @@
 *.Ds_Store
 *.o
 *~
+*.png
+*.gif
