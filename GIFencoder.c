@@ -197,17 +197,16 @@ void writeImageBlockHeader (imageStruct* image, FILE* file) {
     fprintf(file, "%c", (char)0); 
    
     /* LZW Minimum Code Size */
-    fprintf(file, "%c", (char)2); /* Numero de cores */
+    fprintf(file, "%c", image->minCodeSize);
 }
 
 /* Meta 2 */
 void LZWCompress (FILE* file, char minCodeSize, char pixels, int widthHeight) {
-    List dicionario = cria_lista();
-    
-    /* Biblioteca de listas adicionada ver list.h para saber como usar */
     int i;
-    for(i = 0; i < widthHeight; i++){
+    List dicionario = cria_lista();
+
+    for (i = 0; i < widthHeight; i++)
+    {
         insere_lista(dicionario, pixels[i]);
     }
-
 }
