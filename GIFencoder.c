@@ -205,4 +205,9 @@ void LZWCompress (FILE* file, char minCodeSize, char pixels, int widthHeight) {
     List dicionario = cria_lista();
     
     /* Biblioteca de listas adicionada ver list.h para saber como usar */
+    int i;
+    for(i = 0; i < widthHeight; i++){
+        insere_lista(dicionario, pixels[i]);
+    }
+
 }
