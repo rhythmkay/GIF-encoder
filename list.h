@@ -17,10 +17,7 @@ List destroi_lista (List lista);
 int lista_vazia(List lista);
 
 /* Procura na lista um elemento pelo 'carater' da struct*/
-void procura_lista (List lista, char *chave, List *ant, List *actual);
-
-/* Elimina elemento da lista pelo 'carater' da struct */
-void elimina_lista (List lista, char *carater_g);
+int procura_lista (List lista, char *chave);
 
 /* Insere na lista o 'carater' incrementando o indice automaticamente */
 void insere_lista (List lista, char *carater_g);

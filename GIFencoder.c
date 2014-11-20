@@ -200,10 +200,13 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
     int i;
     List dicionario = cria_lista();
 
+    /* Create Dictionary */
     for (i = 0; i < widthHeight; i++)
     {
-        insere_lista(dicionario, &pixels[i]);
+        if (procura_lista(dicionario, &pixels[i]) == 0) /* Não existe no dicionario */
+        {
+            insere_lista(dicionario, &pixels[i]);
+        }
     }
-
 
 }

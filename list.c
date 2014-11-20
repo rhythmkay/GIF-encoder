@@ -35,31 +35,21 @@ int lista_vazia (List lista)
     return (lista->next == NULL ? 1 : 0);
 }
 
-void procura_lista (List lista, char *chave, List *ant, List *actual)
+int procura_lista (List lista, char *chave)
 {
-    *ant = lista;
-    *actual = lista->next;
-    while ((*actual) != NULL && strcmp ((*actual)->carater, chave) < 0)
-    {
-        *ant = *actual;
-        *actual = (*actual)->next;
-    }
-    if ((*actual) != NULL && strcmp((*actual)->carater, chave) != 0)
-    {
-        *actual = NULL; /* Se elemento não for encontrado*/
-    }
-}
+    List temp = lista->next;
 
-void elimina_lista (List lista, char *carater_g)
-{
-    List ant1;
-    List actual1;
-    procura_lista(lista, carater_g, &ant1, &actual1);
-    if (actual1 != NULL)
+    while (temp != NULL)
     {
-        ant1->next = actual1->next;
-        free(actual1);
+        if (strcmp(temp->carater, chave) == 0)
+        {
+            return 1;
+        }
+
+        temp = temp->next;
     }
+
+    return 0;
 }
 
 void insere_lista (List lista, char *carater_g)
