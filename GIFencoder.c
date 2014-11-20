@@ -42,6 +42,7 @@ void RGB2Indexed(unsigned char *data, imageStruct* image) {
             }
 
             image->pixels[y * image->width + x] = (char)colorIndex;
+           // printf("%c", image->pixels[y * image->width + x]);
 
             if (colorIndex == colorNum) 
             {
@@ -108,17 +109,11 @@ void GIFEncoderWrite (imageStruct* image, char* outputFile) {
     //Escrever cabeçalho do GIF
     writeGIFHeader(image, file);
 
-    //Escrever cabeçalho do Image Block
-    // CRIAR FUN‚ÌO para ESCRITA do IMAGE BLOCK HEADER!!!
-    //Sugest‹o da assinatura do mŽtodo a chamar:
+    /* Meta 1 */
     writeImageBlockHeader(image, file);
 
-    /////////////////////////////////////////
-    //Escrever blocos com 256 bytes no m‡ximo
-    /////////////////////////////////////////
-    //CODIFICADOR LZW AQUI !!!! 
-    //Sugest‹o de assinatura do mŽtodo a chamar:
-    LZWCompress(file, image->minCodeSize, *(image->pixels), image->width*image->height);
+    /* Meta 2 */
+    LZWCompress(file, image->minCodeSize, image->pixels, image->width*image->height);
 
     fprintf(file, "%c", (char)0);
 
@@ -201,12 +196,14 @@ void writeImageBlockHeader (imageStruct* image, FILE* file) {
 }
 
 /* Meta 2 */
-void LZWCompress (FILE* file, char minCodeSize, char pixels, int widthHeight) {
+void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
     int i;
     List dicionario = cria_lista();
 
     for (i = 0; i < widthHeight; i++)
     {
-        insere_lista(dicionario, pixels[i]);
+        insere_lista(dicionario, &pixels[i]);
     }
+
+
 }
