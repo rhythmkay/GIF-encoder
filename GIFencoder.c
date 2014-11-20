@@ -199,25 +199,26 @@ void writeImageBlockHeader (imageStruct* image, FILE* file) {
 void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
     int i;
     List dicionario = cria_lista();
-    char *p = NULL, *c, *pc;
+    char *p, *c, *pc, temp;
 
     /* Create Dictionary */
     for (i = 0; i < widthHeight; i++)
     {
-        if (procura_lista(dicionario, &pixels[i]) == 0) /* Não existe no dicionario */
+        temp = pixels[i];
+        if (procura_lista(dicionario, &temp) == 0) /* Não existe no dicionario */
         {
-            insere_lista(dicionario, &pixels[i]);
+            insere_lista(dicionario, &temp);
         }
     }
 
-    //imprime_lista(dicionario);
+    imprime_lista(dicionario);
 
     /* Algoritmo */
-    //for (i = 0; i < widthHeight; i++)
-    //{
-    //    c = (char*)malloc(sizeof(char));
-    //    strcpy(c, &pixels[i]);
+    for (i = 0; i < widthHeight; i++)
+    {
+        c = (char*)malloc(sizeof(char));
+        strcpy(c, &pixels[i]);
 
-     //   pc = strcat(p, c);
-   // }
+        pc = strcat(p, c);
+    }
 }
