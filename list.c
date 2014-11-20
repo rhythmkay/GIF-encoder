@@ -58,6 +58,9 @@ void insere_lista (List lista, char *carater_g)
     List ptr = lista;
     if (no != NULL)
     {
+        printf("CHar:\n");
+        printf("%s\n", carater_g);
+        printf("\n");
         no->carater = (char *)malloc(strlen(carater_g)*sizeof(char));
         strcpy(no->carater, carater_g);
         no->next=NULL;

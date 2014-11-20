@@ -199,6 +199,7 @@ void writeImageBlockHeader (imageStruct* image, FILE* file) {
 void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
     int i;
     List dicionario = cria_lista();
+    char *p = NULL, *c, *pc;
 
     /* Create Dictionary */
     for (i = 0; i < widthHeight; i++)
@@ -209,4 +210,14 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
         }
     }
 
+    //imprime_lista(dicionario);
+
+    /* Algoritmo */
+    //for (i = 0; i < widthHeight; i++)
+    //{
+    //    c = (char*)malloc(sizeof(char));
+    //    strcpy(c, &pixels[i]);
+
+     //   pc = strcat(p, c);
+   // }
 }
