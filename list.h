@@ -24,3 +24,6 @@ void insere_lista (List lista, char *carater_g);
 
 /* Imprime a lista */
 void imprime_lista (List lista);
+
+/* Get Index */
+int get_index(List lista, char *c);

@@ -77,9 +77,26 @@ void insere_lista (List lista, char *carater_g)
 void imprime_lista (List lista)
 {
     List l = lista->next;
+    
     while (l != NULL)
     {
         printf("Char: %s Indice: %i\n", l->carater, l->indice);
         l=l->next;
     }
+}
+
+int get_index(List lista, char *c) 
+{
+    List ptr = lista->next;
+
+    while (ptr != NULL)
+    {
+        if (strcmp(ptr->carater, c) == 0)
+        {
+            return ptr->indice;
+        }
+        ptr = ptr->next;
+    }
+
+    return 0; /* c not found */
 }
