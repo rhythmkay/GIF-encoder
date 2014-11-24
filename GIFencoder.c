@@ -199,56 +199,67 @@ void writeImageBlockHeader (imageStruct* image, FILE* file) {
 void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
     int i, temp_index;
     List dicionario = cria_lista();
-    char *p, c, *pc, temp_char;
+    int *p, c, *pc, temp_char;
+    int c_length = 1;
+    int p_length = 0; /* p is empty */
+    int pc_length = 0;
 
     /* Block Size */
-    fprintf(file, "%c", 's'); /* Confirmar valor professor */
+    fprintf(file, "%c", (char)widthHeight); /* Confirmar valor professor */
 
     /* Create Dictionary */
     for (i = 0; i < widthHeight; i++)
     {
-        temp_char = pixels[i];
-        if (procura_lista(dicionario, &temp_char) == 0) /* Not in dictionary */
+        temp_char = (int)pixels[i];
+        if (procura_lista(dicionario, &temp_char, 1) == 0) /* Not in dictionary */
         {
-            insere_lista(dicionario, &temp_char);
+            insere_lista(dicionario, &temp_char, 1);
         }
     }
-
-    /* Initially p is empty */
-    p = "";
 
     /* Algorythm */
     for (i = 0; i < widthHeight; i++)
     {
         /* c = next char in bitstream */
-        c = pixels[i];
+        c = (int)pixels[i];
+        c_length = 1;
+        printf("%i\n", c);
 
         /* p + c */
-        pc = (char*)malloc((strlen(&c) + strlen(p))*sizeof(char));
-        strcat(pc, p);
-        strcat(pc, &c);
+        pc = (int*)malloc((c_length + p_length)*sizeof(int));
+        pc_length = c_length + p_length;
 
-        if (procura_lista(dicionario, pc) == 1) /* p + c in dictionary */
+        for (i = 0; i < p_length; i++) /* pc = p */
+        {
+            pc[i] = p[i];
+        }
+        pc[p_length] = c; /* pc = pc + c */
+
+        if (procura_lista(dicionario, pc, pc_length) == 1) /* p + c in dictionary */
         {
             /* p = pc */
-            p = (char*)malloc(strlen(pc)*sizeof(char));
-            strcpy(p, pc);
+            p = (int*)malloc(pc_length*sizeof(int));
+            p_length = pc_length;
+            for (i = 0; i < pc_length; i++)
+            {
+                p[i] = pc[i];
+            }
         }
         else /* p + c not in dictionary */
         {
             /* Insert p + c into the list */
-            insere_lista(dicionario, pc);
+            insere_lista(dicionario, pc, pc_length);
 
             /* Get index */
-            temp_index = get_index(dicionario, p);
+            temp_index = get_index(dicionario, p, p_length);
+
             /* Write to File */
             fprintf(file, "%c", (char)temp_index); /* Confirmar valor professor */
 
-            printf("%i\n", temp_index);
-
             /* p = c */
-            p = (char*)malloc(strlen(&c)*sizeof(char));
-            strcpy(p, &c);
+            p = (int*)malloc(sizeof(int));
+            p_length = 1;
+            p[0] = c;
         }
     }
 }

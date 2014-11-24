@@ -2,7 +2,8 @@ typedef struct lnode *List;
 
 typedef struct lnode
 {
-    char *carater;
+    int *carater;
+    int comprimento;
 	int indice;
 	List next;
 } List_node;
@@ -10,20 +11,21 @@ typedef struct lnode
 /* Cria uma lista */
 List cria_lista (void);
 
-/* Destroi uma lista */
-List destroi_lista (List lista);
-
 /* Verifica se a lista está vazia */
 int lista_vazia(List lista);
 
 /* Procura na lista um elemento pelo 'carater' da struct*/
-int procura_lista (List lista, char *chave);
+int procura_lista (List lista, int *chave, int comp);
 
 /* Insere na lista o 'carater' incrementando o indice automaticamente */
-void insere_lista (List lista, char *carater_g);
+void insere_lista (List lista, int *carater, int comp);
 
 /* Imprime a lista */
 void imprime_lista (List lista);
 
 /* Get Index */
-int get_index(List lista, char *c);
+int get_index(List lista, int *chave, int comp);
+
+/* Carater Comparator */
+/* Returns 1 if they are different and 0 if they are equal */
+int caratercmp(int *lista1, int length1, int *lista2, int length2);
