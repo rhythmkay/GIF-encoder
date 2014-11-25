@@ -11,7 +11,7 @@ List cria_lista (void)
     if (aux != NULL)
     {
         aux->carater = NULL;
-        aux->indice = 0;
+        aux->indice = -1;
         aux->next = NULL;
     }
     return aux;
@@ -43,13 +43,13 @@ int procura_lista (List lista, char *chave)
     {
         if (strcmp(temp->carater, chave) == 0)
         {
-            return 1;
+            return 1; /* Found */
         }
 
         temp = temp->next;
     }
 
-    return 0;
+    return 0; /* Not found */
 }
 
 void insere_lista (List lista, char *carater_g)

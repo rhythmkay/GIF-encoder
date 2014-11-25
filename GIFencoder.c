@@ -117,7 +117,7 @@ void GIFEncoderWrite (imageStruct* image, char* outputFile) {
 
     fprintf(file, "%c", (char)0);
 
-    //Trailer
+    /* Trailer */
     trailer = 0x3b;
     fprintf(file, "%c", trailer);
 
@@ -128,11 +128,13 @@ void GIFEncoderWrite (imageStruct* image, char* outputFile) {
 void writeGIFHeader (imageStruct* image, FILE* file) {
     int i;
     char toWrite, GCTF, colorRes, SF, sz, bgci, par;
-
+    
     //Assinatura e versão (GIF87a)
     char* s = "GIF87a";
     for (i = 0; i < (int)strlen(s); i++)
-        fprintf(file, "%c", s[i]);	
+    {
+        fprintf(file, "%c", s[i]);
+    }
 
     //Ecrã lógico (igual à da dimensão da imagem) --> primeiro o LSB e depois o MSB
     fprintf(file, "%c", (char)(image->width & 0xFF));
@@ -197,22 +199,29 @@ void writeImageBlockHeader (imageStruct* image, FILE* file) {
 
 /* Meta 2 */
 void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
-    int i, temp_index;
-    List dicionario = cria_lista();
+    int i, temp_index, clear_code, eoi;
     char *p, c, *pc, temp_char;
+    List dicionario;
 
     /* Block Size */
-    fprintf(file, "%c", 's'); /* Confirmar valor professor */
+    fprintf(file, "%c", (char)widthHeight); /* Confirmar valor professor */
 
     /* Create Dictionary */
-    for (i = 0; i < widthHeight; i++)
+    clear_code = (int)pow(2, (int)minCodeSize); /* minCodeSize ^ 2 */
+    eoi = clear_code + 1;
+
+    dicionario = cria_lista();
+
+    for (i = 0; i < clear_code; i++)
     {
-        temp_char = pixels[i];
-        if (procura_lista(dicionario, &temp_char) == 0) /* Not in dictionary */
-        {
-            insere_lista(dicionario, &temp_char);
-        }
+        temp_char = (char)i;
+        insere_lista(dicionario, &temp_char);
     }
+
+    temp_char = (char)clear_code;
+    insere_lista(dicionario, &temp_char); /* Clear code */
+    temp_char = (char)eoi;
+    insere_lista(dicionario, &temp_char); /* End of information */
 
     /* Initially p is empty */
     p = "";
@@ -243,8 +252,6 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
             temp_index = get_index(dicionario, p);
             /* Write to File */
             fprintf(file, "%c", (char)temp_index); /* Confirmar valor professor */
-
-            printf("%i\n", temp_index);
 
             /* p = c */
             p = (char*)malloc(strlen(&c)*sizeof(char));
