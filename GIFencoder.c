@@ -1,5 +1,5 @@
 #include "GIFencoder.h"
-#include "list.h"
+#include "utils.h"
 
 #include "math.h"
 #include "stdlib.h"
@@ -7,6 +7,9 @@
 #include "string.h"
 
 #include <unistd.h>
+
+int bit_position = 0, n_pos = 0;
+char buffer[1000000000000];
 
 //Conversao de um objecto do tipo Image numa imagem indexada
 imageStruct* GIFEncoder(unsigned char *data, int width, int height) {
@@ -167,6 +170,23 @@ void writeGIFHeader (imageStruct* image, FILE* file) {
     }
 }
 
+void fill_dicionario(List dicionario, int clear_code, int eoi)
+{
+    int i;
+    char temp_char;
+
+    for (i = 0; i < clear_code; i++)
+    {
+        temp_char = (char)i;
+        insere_lista(dicionario, &temp_char, 1);
+    }
+
+    temp_char = (char)clear_code;
+    insere_lista(dicionario, &temp_char, 1); /* Clear code */
+    temp_char = (char)eoi;
+    insere_lista(dicionario, &temp_char, 1); /* End of information */
+}
+
 /* Meta 1 */
 void writeImageBlockHeader (imageStruct* image, FILE* file) {
     char img_separator;
@@ -205,28 +225,20 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
     char *p, *c, *pc, temp_char;
     int p_length = 0, c_length = 0, pc_length = 0;
     List dicionario;
-    int array[widthHeight + 1000];
-    int pos = 0;
 
     /* Create Dictionary */
     clear_code = (int)pow(2, (int)minCodeSize); /* minCodeSize ^ 2 */
     eoi = clear_code + 1;
 
     dicionario = cria_lista();
-
-    for (i = 0; i < clear_code; i++)
-    {
-        temp_char = (char)i;
-        insere_lista(dicionario, &temp_char, 1);
-    }
-
-    temp_char = (char)clear_code;
-    insere_lista(dicionario, &temp_char, 1); /* Clear code */
-    temp_char = (char)eoi;
-    insere_lista(dicionario, &temp_char, 1); /* End of information */
+    fill_dicionario(dicionario, clear_code, eoi);
 
     /* Initially p is empty */
     p = "\0";
+
+    /* Write Start Bits */
+    write_bits(255, 8, file); /* Block Size */
+	write_bits(clear_code, (list_size(dicionario) - 1), file); /* Clear Code */
 
     /* Algorythm */
     for (i = 0; i < widthHeight; i++)
@@ -282,16 +294,21 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
 
             /* Get index */
             temp_index = get_index(dicionario, p, p_length);
-            array[pos] = temp_index;
-            pos++;
+            write_bits(temp_index, (list_size(dicionario) - 1), file); /* Write Index */
 
             /* p = c */
             p = (char*)malloc(sizeof(char));
             p_length = 1;
             p[0] = c[0];
         }
-    }
 
-    /* Write to File */
-    decimal_to_bin(93);
+        if(list_size(dicionario) == 4096) /* Limite Dicionario 12 bits */
+        {
+            dicionario = cria_lista();
+            fill_dicionario(dicionario, clear_code, eoi);
+            write_bits(clear_code, (list_size(dicionario) - 1), file); /* Clear Code */
+		}
+    }
+	
+    write_bits(eoi, (list_size(dicionario) - 1), file); /* End of Information */
 }

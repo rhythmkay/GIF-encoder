@@ -13,6 +13,10 @@ typedef struct lnode
 	List next;
 } List_node;
 
+/* Global variables */
+int bit_position, n_pos;
+char buffer[1000000000000];
+
 /* Cria uma lista */
 List cria_lista (void);
 
@@ -31,8 +35,17 @@ void imprime_lista (List lista);
 /* Get Index */
 int get_index(List lista, char *c, int c_leng);
 
+/* List Size */
+int list_size(List dic);
+
 /* strcmp made by me */
 int strcomp(char *one, int one_leng, char *two, int two_leng);
 
 /* Decimal to Binary */
 void decimal_to_bin(int num);
+
+/* Know the number of bits two write */
+char num_bits(int n);
+
+/* Write bits */
+void write_bits(int n, int numero_bits,  FILE* file);

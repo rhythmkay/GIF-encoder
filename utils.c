@@ -1,4 +1,4 @@
-#include "list.h"
+#include "utils.h"
 
 List cria_lista (void)
 {
@@ -96,6 +96,23 @@ int get_index(List lista, char *c, int c_leng)
     return -1; /* c not found */
 }
 
+int list_size(List dic)
+{
+    List ptr = dic->next;
+
+    while (ptr!=NULL)
+    {
+        if (ptr->next == NULL)
+        {
+            return ptr->indice + 1;
+        }
+
+        ptr = ptr->next;
+    }
+
+    return 0;
+}
+
 int strcomp(char *one, int one_leng, char *two, int two_leng)
 {
     int i;
@@ -132,4 +149,51 @@ void decimal_to_bin(int num)
       {
           printf("%i\n", result[j]);
       }
+}
+
+char num_bits(int n)
+{
+    char number_bits = 0;
+
+    if (n == 0)
+    {
+        return 0;
+    }
+
+    while (n != 0)
+    {
+        number_bits++;
+        n /= 2;
+    }
+
+    return number_bits;
+}
+
+void write_bits(int n, int numero_bits,  FILE* file)
+{ 
+	int bit, i;
+
+	for(i = 0; i < numero_bits; i++)
+    {
+        n = n >> 1;
+		bit = 1 & n;
+		bit = bit << bit_position;
+		buffer[n_pos] = buffer[n_pos] | bit;
+ 
+		bit_position++;
+
+		if(bit_position == 8) /* We have a byte */
+        {
+			//printf("%d\n", towrite[ncodes]);
+			fprintf(file, "%c", buffer[n_pos]);
+ 
+			n_pos++;
+			bit_position = 0;
+ 
+			if(n_pos % 256 == 0) /* New sub block */
+            {
+				write_bits(255, 8, file);
+            }
+		}
+	}
 }
