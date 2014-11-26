@@ -119,3 +119,14 @@ int strcomp(char *one, int one_leng, char *two, int two_leng)
 
     return 1; /* Strings are different */
 }
+
+int turnToBin(int num) {
+    int res = 0;
+    int i = 0;
+    while(num > 0){
+        res += (num % 2)*pow(10,i);
+        num = num/2;
+        i++;
+    }
+    return res;
+}
