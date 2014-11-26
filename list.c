@@ -17,19 +17,6 @@ List cria_lista (void)
     return aux;
 }
 
-List destroi_lista(List lista)
-{
-    List temp_ptr;
-    while (lista_vazia (lista) == 0)
-    {
-        temp_ptr = lista;
-        lista= lista->next;
-        free (temp_ptr);
-    }
-    free(lista);
-    return NULL;
-}
-
 int lista_vazia (List lista)
 {
     return (lista->next == NULL ? 1 : 0);
@@ -41,11 +28,11 @@ int procura_lista (List lista, char *chave)
 
     while (temp != NULL)
     {
-        if (strcmp(temp->carater, chave) == 0)
+        if (strcomp(temp->carater, chave) == 0)
         {
             return 1; /* Found */
         }
-
+        
         temp = temp->next;
     }
 
@@ -80,7 +67,7 @@ void imprime_lista (List lista)
     
     while (l != NULL)
     {
-        printf("Char: %s Indice: %i\n", l->carater, l->indice);
+        printf("Char: %i Indice: %i\n", (int)l->carater[0], l->indice);
         l=l->next;
     }
 }
@@ -91,7 +78,7 @@ int get_index(List lista, char *c)
 
     while (ptr != NULL)
     {
-        if (strcmp(ptr->carater, c) == 0)
+        if (strcomp(ptr->carater, c) == 0)
         {
             return ptr->indice;
         }
@@ -99,4 +86,24 @@ int get_index(List lista, char *c)
     }
 
     return 0; /* c not found */
+}
+
+int strcomp(char *one, char *two)
+{
+    int i;
+
+    if (strlen(one) == strlen(two))
+    {
+        for (i = 0; i < strlen(one); i++)
+        {
+            if (one[i] != two[i])
+            {
+                return 1;
+            }
+        }
+
+        return 0; /* Strings are equal */
+    }
+
+    return 1; /* Strings are different */
 }
