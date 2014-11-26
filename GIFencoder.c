@@ -6,6 +6,8 @@
 #include "stdio.h"
 #include "string.h"
 
+#include <unistd.h>
+
 //Conversao de um objecto do tipo Image numa imagem indexada
 imageStruct* GIFEncoder(unsigned char *data, int width, int height) {
     imageStruct* image = (imageStruct*)malloc(sizeof(imageStruct));
@@ -200,7 +202,7 @@ void writeImageBlockHeader (imageStruct* image, FILE* file) {
 /* Meta 2 */
 void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
     int i, temp_index, clear_code, eoi;
-    char *p, c, *pc, temp_char;
+    char *p, *c, *pc, temp_char;
     List dicionario;
 
     /* Block Size */
@@ -224,27 +226,61 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
     insere_lista(dicionario, &temp_char); /* End of information */
 
     /* Initially p is empty */
-    p = "";
+    p = "\0";
 
     /* Algorythm */
     for (i = 0; i < widthHeight; i++)
     {
         /* c = next char in bitstream */
-        c = pixels[i];
+        c = (char*)malloc(sizeof(char));
+        c[0] = pixels[i];
+
+        printf("Next bitstream (casted to int): %i\n", (int)c[0]);
 
         /* p + c */
-        pc = (char*)malloc((strlen(&c) + strlen(p))*sizeof(char));
-        strcat(pc, p);
-        strcat(pc, &c);
+        if (strlen(p) == 0) /* First case */
+        {
+            pc = (char*)malloc(sizeof(char));
+            pc[0] = c[0];
+        }
+        else
+        {
+            pc = (char*)malloc((1 + strlen(p))*sizeof(char));
+            if (strlen(p) == 1)
+            {
+                pc[0] = p[0];
+                pc[1] = c[0];
+            }
+            else
+            {
+                strcat(pc, p);
+                pc[strlen(pc)] = c[0];
+            }
+        }
 
         if (procura_lista(dicionario, pc) == 1) /* p + c in dictionary */
         {
+            printf("On dic\n");
+
             /* p = pc */
-            p = (char*)malloc(strlen(pc)*sizeof(char));
-            strcpy(p, pc);
+            if (strlen(pc) == 0)
+            {
+                printf("gsdfasd\n");
+                p = (char*)malloc(sizeof(char));
+                p[0] = pc[0];
+            }
+            else
+            {
+                p = (char*)malloc(strlen(pc)*sizeof(char));
+                strcpy(p, pc);
+            }
+
+            sleep(2);
         }
         else /* p + c not in dictionary */
         {
+            printf("Not on dic\n");
+
             /* Insert p + c into the list */
             insere_lista(dicionario, pc);
 
@@ -254,8 +290,12 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
             fprintf(file, "%c", (char)temp_index); /* Confirmar valor professor */
 
             /* p = c */
-            p = (char*)malloc(strlen(&c)*sizeof(char));
-            strcpy(p, &c);
+            p = (char*)malloc(sizeof(char));
+            p[0] = c[0];
+
+            //imprime_lista(dicionario);
+
+            sleep(2);
         }
     }
 }

@@ -10,9 +10,6 @@ typedef struct lnode
 /* Cria uma lista */
 List cria_lista (void);
 
-/* Destroi uma lista */
-List destroi_lista (List lista);
-
 /* Verifica se a lista está vazia */
 int lista_vazia(List lista);
 
@@ -27,3 +24,6 @@ void imprime_lista (List lista);
 
 /* Get Index */
 int get_index(List lista, char *c);
+
+/* strcmp made by me */
+int strcomp(char *one, char *two);
