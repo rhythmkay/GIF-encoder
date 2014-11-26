@@ -1,9 +1,5 @@
 #include "list.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 List cria_lista (void)
 {
     List aux;
@@ -120,13 +116,20 @@ int strcomp(char *one, int one_leng, char *two, int two_leng)
     return 1; /* Strings are different */
 }
 
-int turnToBin(int num) {
-    int res = 0;
-    int i = 0;
-    while(num > 0){
-        res += (num % 2)*pow(10,i);
-        num = num/2;
-        i++;
-    }
-    return res;
+void decimal_to_bin(int num)
+{
+      int result[100]; 
+      int i, j;
+      
+      while(num > 0) 
+      { 
+           result[i] = num%2; 
+           i++; 
+           num = num/2;
+      }
+
+      for(j = i-1; j >= 0; j--) 
+      {
+          printf("%i\n", result[j]);
+      }
 }

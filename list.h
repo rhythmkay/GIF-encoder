@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+
 typedef struct lnode *List;
 
 typedef struct lnode
@@ -28,3 +33,6 @@ int get_index(List lista, char *c, int c_leng);
 
 /* strcmp made by me */
 int strcomp(char *one, int one_leng, char *two, int two_leng);
+
+/* Decimal to Binary */
+void decimal_to_bin(int num);

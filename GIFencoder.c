@@ -205,9 +205,8 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
     char *p, *c, *pc, temp_char;
     int p_length = 0, c_length = 0, pc_length = 0;
     List dicionario;
-
-    /* Block Size */
-    fprintf(file, "%c", (char)widthHeight); /* Confirmar valor professor */
+    int array[widthHeight + 1000];
+    int pos = 0;
 
     /* Create Dictionary */
     clear_code = (int)pow(2, (int)minCodeSize); /* minCodeSize ^ 2 */
@@ -283,8 +282,8 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
 
             /* Get index */
             temp_index = get_index(dicionario, p, p_length);
-            /* Write to File */
-            fprintf(file, "%c", (char)temp_index); /* Confirmar valor professor */
+            array[pos] = temp_index;
+            pos++;
 
             /* p = c */
             p = (char*)malloc(sizeof(char));
@@ -292,4 +291,7 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
             p[0] = c[0];
         }
     }
+
+    /* Write to File */
+    decimal_to_bin(93);
 }
