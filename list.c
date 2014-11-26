@@ -22,13 +22,13 @@ int lista_vazia (List lista)
     return (lista->next == NULL ? 1 : 0);
 }
 
-int procura_lista (List lista, char *chave)
+int procura_lista (List lista, char *chave, int chave_leng)
 {
     List temp = lista->next;
 
     while (temp != NULL)
     {
-        if (strcomp(temp->carater, chave) == 0)
+        if (strcomp(temp->carater, temp->len, chave, chave_leng) == 0)
         {
             return 1; /* Found */
         }
@@ -39,15 +39,21 @@ int procura_lista (List lista, char *chave)
     return 0; /* Not found */
 }
 
-void insere_lista (List lista, char *carater_g)
+void insere_lista (List lista, char *carater_g, int carater_g_leng)
 {
     List no = (List) malloc (sizeof (List_node));
     List ptr = lista;
+    int i;
+
     if (no != NULL)
     {
         no->carater = (char *)malloc(strlen(carater_g)*sizeof(char));
-        strcpy(no->carater, carater_g);
+        for (i = 0; i < carater_g_leng; i++)
+        {
+            no->carater[i] = carater_g[i];
+        }
         no->next=NULL;
+        no->len = carater_g_leng;
         while (ptr != NULL)
         {
             if (ptr->next == NULL)
@@ -64,37 +70,43 @@ void insere_lista (List lista, char *carater_g)
 void imprime_lista (List lista)
 {
     List l = lista->next;
+    int i;
     
     while (l != NULL)
     {
-        printf("Char: %i Indice: %i\n", (int)l->carater[0], l->indice);
+        printf("Char:");
+        for (i = 0; i < l->len; i++)
+        {
+            printf("%i", (int)l->carater[i]);
+        }
+        printf(" Indice: %i\n", l->indice);
         l=l->next;
     }
 }
 
-int get_index(List lista, char *c) 
+int get_index(List lista, char *c, int c_leng) 
 {
     List ptr = lista->next;
 
     while (ptr != NULL)
     {
-        if (strcomp(ptr->carater, c) == 0)
+        if (strcomp(ptr->carater, ptr->len, c, c_leng) == 0)
         {
             return ptr->indice;
         }
         ptr = ptr->next;
     }
 
-    return 0; /* c not found */
+    return -1; /* c not found */
 }
 
-int strcomp(char *one, char *two)
+int strcomp(char *one, int one_leng, char *two, int two_leng)
 {
     int i;
 
-    if (strlen(one) == strlen(two))
+    if (one_leng == two_leng)
     {
-        for (i = 0; i < strlen(one); i++)
+        for (i = 0; i < one_leng; i++)
         {
             if (one[i] != two[i])
             {
