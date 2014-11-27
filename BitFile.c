@@ -3,6 +3,8 @@
 #include "stdlib.h"
 #include "string.h"
 
+#include <unistd.h>
+
 bitStream* bitFile(FILE* file)
 {
 	int i;
@@ -22,8 +24,9 @@ void flush(bitStream* stream)
 	int numBytes = stream->index_ + (stream->bitsLeft_ == 8 ? 0 : 1);
 	if (numBytes > 0) {
 		fprintf(stream->output_, "%c", (char)numBytes);
-		for (i=0; i<numBytes; i++)
+		for (i=0; i<numBytes; i++){
 			fprintf(stream->output_, "%c", (char)stream->buffer_[i]);
+        }
 		stream->buffer_[0] = 0;
 		stream->index_ = 0;
 		stream->bitsLeft_ = 8;
@@ -41,8 +44,9 @@ void write_bits(bitStream* stream, int bits, int numbits)
 			for (i = 0; i < numBytes; i++)
 				fprintf(stream->output_, "%c", stream->buffer_[i]);
 
-			for (i = 0; i <= numBytes; i++)
-				printf("%d: %d\n", i + 1, stream->buffer_[i]);
+			for (i = 0; i <= numBytes; i++){
+				//printf("%d: %d\n", i + 1, stream->buffer_[i]);
+            }
 
 			stream->buffer_[0] = 0;
 			stream->index_ = 0;

@@ -13,10 +13,6 @@ typedef struct lnode
 	List next;
 } List_node;
 
-/* Global variables */
-int bit_position, n_pos;
-char buffer[1000000000000];
-
 /* Cria uma lista */
 List cria_lista (void);
 
