@@ -20,7 +20,7 @@ void RGB2Indexed(unsigned char *data, imageStruct* image);
 
 int nextPower2(int n);
 
-char numBits(int n);
+char num_bits(int n);
 
 void GIFEncoderWrite(imageStruct* image, char* outputFile);
 

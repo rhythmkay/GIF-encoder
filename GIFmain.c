@@ -13,14 +13,24 @@ int main(int argc, char *argv[]) {
     imageStruct* image;
 
     if (argc > 1)
+    {
         inputFile = argv[1];
+    }
     else
-        inputFile = "portugal.png";
+    {
+        //inputFile = "portugal.png";
+        inputFile = "monica.png";
+    }
 
     if (argc > 2)
+    {
         outputFile = argv[2];
+    }
     else
-        outputFile = "portugalOutput.gif";
+    {
+        //outputFile = "portugalOutput.gif";
+        outputFile = "monicaOutput.gif";
+    }
 
     printf("Loading file %s\n", inputFile);
     printf("Writing to file %s\n", outputFile);

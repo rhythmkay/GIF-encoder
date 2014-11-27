@@ -150,21 +150,3 @@ void decimal_to_bin(int num)
           printf("%i\n", result[j]);
       }
 }
-
-char num_bits(int n)
-{
-    char number_bits = 0;
-
-    if (n == 0)
-    {
-        return 0;
-    }
-
-    while (n != 0)
-    {
-        number_bits++;
-        n /= 2;
-    }
-
-    return number_bits;
-}

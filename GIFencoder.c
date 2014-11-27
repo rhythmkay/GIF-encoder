@@ -66,7 +66,7 @@ void RGB2Indexed(unsigned char *data, imageStruct* image) {
     memcpy(copy, image->colors, sizeof(char)*colorNum*3);
     image->colors = copy;
 
-    image->minCodeSize = numBits(image->numColors - 1);
+    image->minCodeSize = num_bits(image->numColors - 1);
     if (image->minCodeSize == (char)1)  //Imagens binárias --> caso especial (pág. 26 do RFC)
         image->minCodeSize++;
 }
@@ -90,7 +90,7 @@ int nextPower2(int n) {
 }
 
 //Numero de bits necessario para representar n
-char numBits(int n) {
+char num_bits(int n) {
     char nb = 0;
 
     if (n == 0)
@@ -149,7 +149,7 @@ void writeGIFHeader (imageStruct* image, FILE* file) {
     GCTF = 1;
     colorRes = 7;  //número de bits por cor primária (-1)
     SF = 0;
-    sz = numBits(image->numColors - 1) - 1; //-1: 0 --> 2^1, 7 --> 2^8
+    sz = num_bits(image->numColors - 1) - 1; //-1: 0 --> 2^1, 7 --> 2^8
     toWrite = (char) (GCTF << 7 | colorRes << 4 | SF << 3 | sz);
     fprintf(file, "%c", toWrite);
 
@@ -241,7 +241,7 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
 
     /* Write Start Bits */
     write_bits(bit_stream, 255, 8); /* Block Size */
-	write_bits(bit_stream, clear_code, (list_size(dicionario) - 1)); /* Clear Code */
+	write_bits(bit_stream, clear_code, num_bits(list_size(dicionario) - 1)); /* Clear Code */
 
     /* Algorythm */
     for (i = 0; i < widthHeight; i++)
@@ -297,7 +297,7 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
 
             /* Get index */
             temp_index = get_index(dicionario, p, p_length);
-            write_bits(bit_stream, temp_index, (list_size(dicionario) - 1)); /* Write Index */
+            write_bits(bit_stream, temp_index, num_bits(list_size(dicionario) - 1)); /* Write Index */
 
             /* p = c */
             p = (char*)malloc(sizeof(char));
@@ -305,13 +305,15 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
             p[0] = c[0];
         }
 
-        if(list_size(dicionario) == 4096) /* Limite Dicionario 12 bits */
+        if(num_bits(list_size(dicionario) - 1) > 12) /* Limite Dicionario 12 bits */
         {
             dicionario = cria_lista();
             fill_dicionario(dicionario, clear_code, eoi);
-            write_bits(bit_stream, clear_code, (list_size(dicionario) - 1)); /* Clear Code */
+            write_bits(bit_stream, clear_code, num_bits(list_size(dicionario) - 1)); /* Clear Code */
 		}
     }
 	
-    write_bits(bit_stream, eoi, (list_size(dicionario) - 1)); /* End of Information */
+    write_bits(bit_stream, eoi, num_bits(list_size(dicionario) - 1)); /* End of Information */
+
+    flush(bit_stream);
 }

@@ -43,6 +43,3 @@ int strcomp(char *one, int one_leng, char *two, int two_leng);
 
 /* Decimal to Binary */
 void decimal_to_bin(int num);
-
-/* Know the number of bits two write */
-char num_bits(int n);
