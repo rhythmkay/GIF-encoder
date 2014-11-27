@@ -96,7 +96,7 @@ int get_index(List lista, char *c, int c_leng)
     return -1; /* c not found */
 }
 
-int list_size(List dic)
+int list_last_index(List dic)
 {
     List ptr = dic->next;
 
@@ -104,7 +104,7 @@ int list_size(List dic)
     {
         if (ptr->next == NULL)
         {
-            return ptr->indice + 1;
+            return ptr->indice;
         }
 
         ptr = ptr->next;

@@ -32,7 +32,7 @@ void imprime_lista (List lista);
 int get_index(List lista, char *c, int c_leng);
 
 /* List Size */
-int list_size(List dic);
+int list_last_index(List dic);
 
 /* strcmp made by me */
 int strcomp(char *one, int one_leng, char *two, int two_leng);

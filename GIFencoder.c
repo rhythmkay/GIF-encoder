@@ -240,8 +240,7 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
     p = "\0";
 
     /* Write Start Bits */
-    write_bits(bit_stream, 255, 8); /* Block Size */
-	write_bits(bit_stream, clear_code, num_bits(list_size(dicionario) - 1)); /* Clear Code */
+	write_bits(bit_stream, clear_code, num_bits(list_last_index(dicionario))); /* Clear Code */
 
     /* Algorythm */
     for (i = 0; i < widthHeight; i++)
@@ -251,12 +250,6 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
         c[0] = pixels[i];
         c_length = 1;
 
-        for (int j = 0; j < c_length; j++)
-        {
-            printf("c = %i", (int)c[j]);
-        }
-        printf("\n");
-        
         /* p + c */
         if (p_length == 0) /* First case */
         {
@@ -266,33 +259,18 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
         }
         else
         {
-            pc = (char*)malloc((1 + p_length)*sizeof(char));
             pc_length = 1 + p_length;
-            if (p_length == 1)
+            pc = (char*)malloc(pc_length*sizeof(char));
+
+            for (int j = 0; j < p_length; j++)
             {
-                pc[0] = p[0];
-                pc[1] = c[0];
+                pc[j] = p[j];
             }
-            else
-            {
-                strcat(pc, p);
-                pc[pc_length] = c[0];
-            }
+            pc[pc_length - 1] = c[0];
         }
-
-        sleep(1);
-
-        printf("pc = ");
-        for (int j = 0; j < pc_length; j++)
-        {
-            printf("%i", (int)pc[j]);
-        }
-        printf("\n");
-
+        
         if (procura_lista(dicionario, pc, pc_length) == 1) /* p + c in dictionary */
         {
-            printf("On dic\n");
-
             /* p = pc */
             if (pc_length == 1)
             {
@@ -309,50 +287,36 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
                     p[j] = pc[j];
                 }
             }
-
-            printf("p = ");
-            for (int j = 0; j < p_length; j++)
-            {
-                printf("%i", (int)p[j]);
-            }
-            printf("\n");
-
-            sleep(1);
         }
         else /* p + c not in dictionary */
         {
-            printf("Not on dic\n");
-
             /* Insert p + c into the list */
             insere_lista(dicionario, pc, pc_length);
 
             /* Get index */
-            temp_index = get_index(dicionario, p, p_length);
-            write_bits(bit_stream, temp_index, num_bits(list_size(dicionario) - 1)); /* Write Index */
-            printf("write to file\n");
+            if (list_last_index(dicionario) < 4096)
+            {
+                temp_index = get_index(dicionario, p, p_length);
+                write_bits(bit_stream, temp_index, num_bits(list_last_index(dicionario))); /* Write Index */
+            }
+
+            /*if (list_last_index(dicionario) == 4095)
+            {
+                imprime_lista(dicionario);
+                printf("CLEAN DIC\n");
+                dicionario = cria_lista();
+                fill_dicionario(dicionario, clear_code, eoi);
+                write_bits(bit_stream, clear_code, num_bits(list_last_index(dicionario) - 1)); * Clear Code *
+            }*/
+
             /* p = c */
             p = (char*)malloc(sizeof(char));
             p_length = 1;
             p[0] = c[0];
-
-            printf("p = ");
-            for (int j = 0; j < p_length; j++)
-            {
-                printf("%i", (int)p[j]);
-            }
-            printf("\n");
-
         }
-
-        if(num_bits(list_size(dicionario) - 1) > 12) /* Limite Dicionario 12 bits */
-        {
-            dicionario = cria_lista();
-            fill_dicionario(dicionario, clear_code, eoi);
-            write_bits(bit_stream, clear_code, num_bits(list_size(dicionario) - 1)); /* Clear Code */
-		}
     }
 	
-    write_bits(bit_stream, eoi, num_bits(list_size(dicionario) - 1)); /* End of Information */
+    write_bits(bit_stream, eoi, num_bits(list_last_index(dicionario))); /* End of Information */
 
     flush(bit_stream);
 }
