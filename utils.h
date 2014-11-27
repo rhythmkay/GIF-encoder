@@ -46,6 +46,3 @@ void decimal_to_bin(int num);
 
 /* Know the number of bits two write */
 char num_bits(int n);
-
-/* Write bits */
-void write_bits(int n, int numero_bits,  FILE* file);

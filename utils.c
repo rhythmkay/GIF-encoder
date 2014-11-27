@@ -168,32 +168,3 @@ char num_bits(int n)
 
     return number_bits;
 }
-
-void write_bits(int n, int numero_bits,  FILE* file)
-{ 
-	int bit, i;
-
-	for(i = 0; i < numero_bits; i++)
-    {
-        n = n >> 1;
-		bit = 1 & n;
-		bit = bit << bit_position;
-		buffer[n_pos] = buffer[n_pos] | bit;
- 
-		bit_position++;
-
-		if(bit_position == 8) /* We have a byte */
-        {
-			//printf("%d\n", towrite[ncodes]);
-			fprintf(file, "%c", buffer[n_pos]);
- 
-			n_pos++;
-			bit_position = 0;
- 
-			if(n_pos % 256 == 0) /* New sub block */
-            {
-				write_bits(255, 8, file);
-            }
-		}
-	}
-}

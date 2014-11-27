@@ -1,2 +1,2 @@
-out: GIFencoder.c GIFmain.c utils.c
-	gcc GIFencoder.c GIFmain.c utils.c -o out
+out: GIFencoder.c GIFmain.c utils.c BitFile.c
+	gcc GIFencoder.c GIFmain.c utils.c BitFile.c -o out

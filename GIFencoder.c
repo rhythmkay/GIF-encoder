@@ -1,5 +1,6 @@
 #include "GIFencoder.h"
 #include "utils.h"
+#include "BitFile.h"
 
 #include "math.h"
 #include "stdlib.h"
@@ -7,9 +8,6 @@
 #include "string.h"
 
 #include <unistd.h>
-
-int bit_position = 0, n_pos = 0;
-char buffer[1000000000000];
 
 //Conversao de um objecto do tipo Image numa imagem indexada
 imageStruct* GIFEncoder(unsigned char *data, int width, int height) {
@@ -23,7 +21,7 @@ imageStruct* GIFEncoder(unsigned char *data, int width, int height) {
     return image; 
 }
 
-//Conversao de lista RGB para indexada: máximo de 256 cores
+//Conversao de lista RGB para indexada a um maximo de 256 cores
 void RGB2Indexed(unsigned char *data, imageStruct* image) {
     int x, y, colorIndex, colorNum = 0;
     char *copy;
@@ -73,7 +71,7 @@ void RGB2Indexed(unsigned char *data, imageStruct* image) {
         image->minCodeSize++;
 }
 
-//Determinação da próxima potência de 2 de um dado inteiro n
+//Determinacao da proxima potencia de 2 de um dado inteiro n
 int nextPower2(int n) {
     int ret = 1, nIni = n;
 
@@ -91,7 +89,7 @@ int nextPower2(int n) {
     return ret;
 }
 
-//Número de bits necessário para representar n
+//Numero de bits necessario para representar n
 char numBits(int n) {
     char nb = 0;
 
@@ -106,7 +104,7 @@ char numBits(int n) {
     return nb;
 }
 
-//Função para escrever imagem no formato GIF, versão 87a
+//Fucao para escrever imagem no formato GIF, versao 87a
 void GIFEncoderWrite (imageStruct* image, char* outputFile) {
     FILE* file = fopen(outputFile, "wb");
     char trailer;
@@ -170,6 +168,7 @@ void writeGIFHeader (imageStruct* image, FILE* file) {
     }
 }
 
+/* Fill Dic Function */
 void fill_dicionario(List dicionario, int clear_code, int eoi)
 {
     int i;
@@ -225,6 +224,10 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
     char *p, *c, *pc, temp_char;
     int p_length = 0, c_length = 0, pc_length = 0;
     List dicionario;
+    bitStream *bit_stream;
+
+    /* Create Bit Stream */
+    bit_stream = bitFile(file);
 
     /* Create Dictionary */
     clear_code = (int)pow(2, (int)minCodeSize); /* minCodeSize ^ 2 */
@@ -237,8 +240,8 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
     p = "\0";
 
     /* Write Start Bits */
-    write_bits(255, 8, file); /* Block Size */
-	write_bits(clear_code, (list_size(dicionario) - 1), file); /* Clear Code */
+    write_bits(bit_stream, 255, 8); /* Block Size */
+	write_bits(bit_stream, clear_code, (list_size(dicionario) - 1)); /* Clear Code */
 
     /* Algorythm */
     for (i = 0; i < widthHeight; i++)
@@ -294,7 +297,7 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
 
             /* Get index */
             temp_index = get_index(dicionario, p, p_length);
-            write_bits(temp_index, (list_size(dicionario) - 1), file); /* Write Index */
+            write_bits(bit_stream, temp_index, (list_size(dicionario) - 1)); /* Write Index */
 
             /* p = c */
             p = (char*)malloc(sizeof(char));
@@ -306,9 +309,9 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
         {
             dicionario = cria_lista();
             fill_dicionario(dicionario, clear_code, eoi);
-            write_bits(clear_code, (list_size(dicionario) - 1), file); /* Clear Code */
+            write_bits(bit_stream, clear_code, (list_size(dicionario) - 1)); /* Clear Code */
 		}
     }
 	
-    write_bits(eoi, (list_size(dicionario) - 1), file); /* End of Information */
+    write_bits(bit_stream, eoi, (list_size(dicionario) - 1)); /* End of Information */
 }
