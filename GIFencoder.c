@@ -7,8 +7,6 @@
 #include "stdio.h"
 #include "string.h"
 
-#include <unistd.h>
-
 //Conversao de um objecto do tipo Image numa imagem indexada
 imageStruct* GIFEncoder(unsigned char *data, int width, int height) {
     imageStruct* image = (imageStruct*)malloc(sizeof(imageStruct));
@@ -57,17 +55,17 @@ void RGB2Indexed(unsigned char *data, imageStruct* image) {
         }
     }
 
-    //Define o número de cores como potência de 2 (devido aos requistos da Global Color Table)
+    //Define o número de cores como potencia de 2 (devido aos requistos da Global Color Table)
     image->numColors = nextPower2(colorNum);
 
-    //Refine o array de cores com base no número final obtido
+    //Refine o array de cores com base no numero final obtido
     copy = (char*)calloc(image->numColors*3, sizeof(char));
     memset(copy, 0, sizeof(char)*image->numColors*3);
     memcpy(copy, image->colors, sizeof(char)*colorNum*3);
     image->colors = copy;
 
     image->minCodeSize = num_bits(image->numColors - 1);
-    if (image->minCodeSize == (char)1)  //Imagens binárias --> caso especial (pág. 26 do RFC)
+    if (image->minCodeSize == (char)1)  //Imagens binarias --> caso especial (pag. 26 do RFC)
         image->minCodeSize++;
 }
 
@@ -127,19 +125,19 @@ void GIFEncoderWrite (imageStruct* image, char* outputFile) {
     fclose(file);
 }
 
-//Gravar cabeçalho do GIF (até global color table)
+//Gravar cabecalho do GIF (ate global color table)
 void writeGIFHeader (imageStruct* image, FILE* file) {
     int i;
     char toWrite, GCTF, colorRes, SF, sz, bgci, par;
     
-    //Assinatura e versão (GIF87a)
+    //Assinatura e versao (GIF87a)
     char* s = "GIF87a";
     for (i = 0; i < (int)strlen(s); i++)
     {
         fprintf(file, "%c", s[i]);
     }
 
-    //Ecrã lógico (igual à da dimensão da imagem) --> primeiro o LSB e depois o MSB
+    //Ecra logico (igual a da dimensao da imagem) --> primeiro o LSB e depois o MSB
     fprintf(file, "%c", (char)(image->width & 0xFF));
     fprintf(file, "%c", (char)((image->width >> 8) & 0xFF));
     fprintf(file, "%c", (char)(image->height & 0xFF));
@@ -147,7 +145,7 @@ void writeGIFHeader (imageStruct* image, FILE* file) {
 
     //GCTF, Color Res, SF, size of GCT
     GCTF = 1;
-    colorRes = 7;  //número de bits por cor primária (-1)
+    colorRes = 7;  //Numero de bits por cor primaria (-1)
     SF = 0;
     sz = num_bits(image->numColors - 1) - 1; //-1: 0 --> 2^1, 7 --> 2^8
     toWrite = (char) (GCTF << 7 | colorRes << 4 | SF << 3 | sz);
@@ -158,7 +156,7 @@ void writeGIFHeader (imageStruct* image, FILE* file) {
     fprintf(file, "%c", bgci);
 
     //Pixel aspect ratio
-    par = 0; // 0 --> informação sobre aspect ratio não fornecida --> decoder usa valores por omissão
+    par = 0; // 0 --> informacao sobre aspect ratio nao fornecida --> decoder usa valores por omissao
     fprintf(file, "%c",par);
 
     //Global color table
@@ -211,11 +209,8 @@ void writeImageBlockHeader (imageStruct* image, FILE* file) {
     /* Byte Offset 8 */
     fprintf(file, "%c", (char)0);
 
-    /* Local Color Tale */
-    fprintf(file, "%c", (char)0); 
-
     /* LZW Minimum Code Size */
-    fprintf(file, "%c", image->minCodeSize);
+    fprintf(file, "%c", (char)image->minCodeSize);
 }
 
 /* Meta 2 */
@@ -240,7 +235,7 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
     p = "\0";
 
     /* Write Start Bits */
-	write_bits(bit_stream, clear_code, num_bits(list_last_index(dicionario))); /* Clear Code */
+	write_bits(bit_stream, clear_code, num_bits(list_last_index(dicionario) - 1)); /* Clear Code */
 
     /* Algorythm */
     for (i = 0; i < widthHeight; i++)
@@ -291,23 +286,14 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
         else /* p + c not in dictionary */
         {
             /* Insert p + c into the list */
-            insere_lista(dicionario, pc, pc_length);
-
-            /* Get index */
             if (list_last_index(dicionario) < 4096)
             {
-                temp_index = get_index(dicionario, p, p_length);
-                write_bits(bit_stream, temp_index, num_bits(list_last_index(dicionario))); /* Write Index */
+                insere_lista(dicionario, pc, pc_length);
             }
-
-            /*if (list_last_index(dicionario) == 4095)
-            {
-                imprime_lista(dicionario);
-                printf("CLEAN DIC\n");
-                dicionario = cria_lista();
-                fill_dicionario(dicionario, clear_code, eoi);
-                write_bits(bit_stream, clear_code, num_bits(list_last_index(dicionario) - 1)); * Clear Code *
-            }*/
+            
+            /* Get Index */
+            temp_index = get_index(dicionario, p, p_length);
+            write_bits(bit_stream, temp_index, num_bits(list_last_index(dicionario) - 1)); /* Write Index */
 
             /* p = c */
             p = (char*)malloc(sizeof(char));
@@ -316,7 +302,7 @@ void LZWCompress (FILE* file, char minCodeSize, char *pixels, int widthHeight) {
         }
     }
 	
-    write_bits(bit_stream, eoi, num_bits(list_last_index(dicionario))); /* End of Information */
+    write_bits(bit_stream, eoi, num_bits(list_last_index(dicionario) - 1)); /* End of Information */
 
     flush(bit_stream);
 }
